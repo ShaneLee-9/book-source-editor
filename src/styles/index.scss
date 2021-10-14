@@ -1,0 +1,9 @@
+@use "reset";
+
+html, body, #app {
+  height: 100%;
+}
+
+html {
+  background: url("../assets/bg.jpg");
+}
