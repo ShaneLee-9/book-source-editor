@@ -8,10 +8,11 @@ import {
   ElButton,
   ElLink,
 } from 'element-plus';
-// import QRCode from 'qrcode';
+import QRCodeDialog from './QRCodeDialog.vue';
 
 const formData = ref({
   enabled: true,
+  lastUpdateTime: Date.now(),
   bookSourceName: '',
   bookSourceUrl: '',
   bookSourceGroup: '',
@@ -68,16 +69,14 @@ const formData = ref({
   },
 });
 
-const confirm = () => {
-  console.log();
-};
+const isQRCodeVisible = ref(false);
 </script>
 
 <template>
   <div class="home">
     <el-card>
       <template #header>
-        <h3>基础</h3>
+        <h3>🧻 基础</h3>
       </template>
       <el-form label-width="8em">
         <el-form-item label="书源名" required><el-input v-model="formData.bookSourceName" /></el-form-item>
@@ -91,7 +90,7 @@ const confirm = () => {
 
     <el-card>
       <template #header>
-        <h3>搜索</h3>
+        <h3>🔍 搜索</h3>
       </template>
       <el-form label-width="9em">
         <el-form-item label="搜索URL" required><el-input v-model="formData.searchUrl" /></el-form-item>
@@ -109,7 +108,7 @@ const confirm = () => {
 
     <el-card>
       <template #header>
-        <h3>发现<span class="form-header-desc">（此项可不填，若填写此项，下列表单必填项参考“搜索表单”）</span></h3>
+        <h3>🔎 发现<span class="form-header-desc">（此项可不填，若填写此项，下列表单必填项参考“搜索表单”）</span></h3>
       </template>
       <el-form label-width="9em">
         <el-form-item label="发现地址规则"><el-input v-model="formData.exploreUrl" /></el-form-item>
@@ -127,10 +126,10 @@ const confirm = () => {
 
     <el-card>
       <template #header>
-        <h3>书籍</h3>
+        <h3>📕 书籍</h3>
       </template>
       <el-form label-width="10em">
-        <el-form-item label="书籍详情预处理规则"><el-input v-model="formData.bookInfoInit" /></el-form-item>
+        <el-form-item label="预处理规则"><el-input v-model="formData.bookInfoInit" /></el-form-item>
         <el-form-item label="书名规则" required><el-input v-model="formData.ruleBookInfo.name" /></el-form-item>
         <el-form-item label="作者规则" required><el-input v-model="formData.ruleBookInfo.author" /></el-form-item>
         <el-form-item label="分类规则"><el-input v-model="formData.ruleBookInfo.kind" /></el-form-item>
@@ -144,7 +143,7 @@ const confirm = () => {
 
     <el-card>
       <template #header>
-        <h3>目录</h3>
+        <h3>📚 目录</h3>
       </template>
       <el-form label-width="8em">
         <el-form-item label="目录列表" required><el-input v-model="formData.ruleToc.chapterList" placeholder="首字符使用负号(-)可使列表反序" /></el-form-item>
@@ -158,23 +157,25 @@ const confirm = () => {
 
     <el-card>
       <template #header>
-        <h3>正文</h3>
+        <h3>📰 正文</h3>
       </template>
       <el-form label-width="11em">
         <el-form-item label="正文规则" required><el-input v-model="formData.ruleContent.content" /></el-form-item>
-        <el-form-item label="正则" required><el-input v-model="formData.ruleContent.replaceRegex" /></el-form-item>
-        <el-form-item label="正文下一页URL规则" required><el-input v-model="formData.ruleContent.nextContentUrl" /></el-form-item>
+        <el-form-item label="正则"><el-input v-model="formData.ruleContent.replaceRegex" /></el-form-item>
+        <el-form-item label="正文下一页URL规则"><el-input v-model="formData.ruleContent.nextContentUrl" /></el-form-item>
       </el-form>
     </el-card>
 
     <div class="confirm">
-      <el-button type="primary" icon="el-icon-check" @click="confirm">生成二维码</el-button>
+      <el-button type="primary" icon="el-icon-check" @click="isQRCodeVisible = true">生成二维码</el-button>
     </div>
 
     <div class="links">
       <el-link href="https://mp.weixin.qq.com/s/HHP-fmtE3WhX4cFAq40hPw" target="_blank" type="primary">书源教程</el-link>
       <el-link href="https://namofree.gitee.io/yuedu3/legado3_booksource_by_Namo.json" target="_blank" type="primary">书源参考</el-link>
     </div>
+
+    <q-r-code-dialog v-model="isQRCodeVisible" :form-data="formData" />
   </div>
 </template>
 
